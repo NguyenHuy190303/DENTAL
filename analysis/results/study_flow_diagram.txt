@@ -1,0 +1,19 @@
+
+        BRFSS 2022 Dataset
+        n = 445,132 participants
+                |
+                v
+        Inclusion Criteria Applied:
+        - Adults aged 18-80 years
+        - Valid dental health responses
+                |
+                v
+        Final Analytic Sample
+        n = 216,847 participants
+                |
+                v
+        Data Splits:
+        Training: 60% (n=130,108)
+        Validation: 10% (n=21,685)
+        Testing: 30% (n=65,054)
+        
