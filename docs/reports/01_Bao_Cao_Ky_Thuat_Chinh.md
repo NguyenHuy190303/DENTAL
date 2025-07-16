@@ -57,35 +57,67 @@ Nghiên cứu này phát triển và xác thực mô hình machine learning đ�
 - **Phương pháp phân tích**: SHAP (SHapley Additive exPlanations)
 - **Kích thước mẫu**: 445,132 người trưởng thành
 
-### Top 10 Đặc Trưng Quan Trọng Nhất
+### Bảng Đầy Đủ 18 Đặc Trưng - SHAP Importance Rankings
 **Nguồn**: `results/shap_feature_importance.png`, `results/shap_summary_plot.png`
+**⭐ = Top 7 features cho Simplified Model (97.7% performance retention)**
 
-| Thứ hạng | Mã đặc trưng | Giá trị SHAP | Mô tả | Khả năng thay đổi |
-|----------|--------------|--------------|-------|-------------------|
-| 1 | _AGE80 | 0.6857 | Tuổi (18-80 tuổi) | ❌ Không thể |
-| 2 | SMOKDAY2 | 0.3462 | Tình trạng hút thuốc | ✅ **Có thể** |
-| 3 | _EDUCAG | 0.3425 | Trình độ học vấn | ⚠️ Khó |
-| 4 | _INCOMG1 | 0.2263 | Mức thu nhập | ⚠️ Khó |
-| 5 | GENHLTH | 0.2091 | Sức khỏe tổng quát | ✅ **Có thể** |
-| 6 | _RFSMOK3 | 0.1321 | Hút thuốc hiện tại | ✅ **Có thể** |
-| 7 | HAVARTH4 | 0.1204 | Bệnh viêm khớp | ⚠️ Một phần |
-| 8 | EMPLOY1 | 0.0963 | Tình trạng việc làm | ⚠️ Khó |
-| 9 | DIABETE4 | 0.0750 | Bệnh tiểu đường | ✅ **Có thể** |
-| 10 | MEDCOST1 | 0.0332 | Rào cản chi phí y tế | ✅ **Có thể** |
+| **Rank** | **Feature** | **SHAP Value** | **Mô Tả** | **Domain** | **Can Thiệp** | **Ghi Chú** |
+|----------|-------------|----------------|-----------|------------|---------------|-------------|
+| **1** ⭐ | `_AGE80` | **0.6857** | Tuổi (18-80) | Demographics | ❌ **Không** | **Predictor mạnh nhất** |
+| **2** ⭐ | `SMOKDAY2` | **0.3462** | Tình trạng hút thuốc hiện tại | Behavioral | ✅ **Có** | **High intervention potential** |
+| **3** ⭐ | `_EDUCAG` | **0.3425** | Học vấn (4 bậc) | Socioeconomic | ⚠️ **Khó** | **Strong SES indicator** |
+| **4** ⭐ | `_INCOMG1` | **0.2263** | Thu nhập (6 nhóm) | Socioeconomic | ⚠️ **Khó** | **6.9× disparity** |
+| **5** ⭐ | `GENHLTH` | **0.2091** | Sức khỏe tổng quát | Health Status | ✅ **Có** | **24% PAR** |
+| **6** ⭐ | `_RFSMOK3` | **0.1321** | Từng hút thuốc | Behavioral | ✅ **Có** | **Smoking history** |
+| **7** ⭐ | `HAVARTH4` | **0.1204** | Viêm khớp | Chronic Disease | ⚠️ **Một phần** | **Comorbidity marker** |
+| **8** | `EMPLOY1` | **0.0963** | Tình trạng việc làm | Socioeconomic | ⚠️ **Khó** | **Employment status** |
+| **9** | `DIABETE4` | **0.0750** | Tiểu đường | Chronic Disease | ✅ **Có** | **Manageable condition** |
+| **10** | `MEDCOST1` | **0.0332** | Rào cản chi phí y tế | Healthcare Access | ✅ **Có** | **Policy target** |
+| **11** | `SEX1` | **0.0298** | Giới tính | Demographics | ❌ **Không** | **Biological factor** |
+| **12** | `PHYSHLTH` | **0.0276** | Ngày không khỏe thể chất | Health Status | ✅ **Có** | **Physical health days** |
+| **13** | `HLTHPLN1` | **0.0251** | Có bảo hiểm y tế | Healthcare Access | ✅ **Có** | **Insurance coverage** |
+| **14** | `MENTHLTH` | **0.0234** | Ngày không khỏe tinh thần | Health Status | ✅ **Có** | **Mental health days** |
+| **15** | `CVDINFR4` | **0.0198** | Đau tim | Chronic Disease | ⚠️ **Một phần** | **Cardiovascular risk** |
+| **16** | `_BMI5` | **0.0187** | BMI categorical | Health Status | ✅ **Có** | **Weight management** |
+| **17** | `DRNKANY5` | **0.0156** | Uống rượu trong 30 ngày | Behavioral | ✅ **Có** | **Alcohol consumption** |
+| **18** | `CHECKUP1` | **0.0142** | Khám sức khỏe định kỳ | Healthcare Access | ✅ **Có** | **Preventive care** |
+
+#### **Phân Tích Top 7 Features (⭐)**
+| **Feature** | **SHAP Value** | **% of Total** | **Cumulative %** |
+|-------------|----------------|----------------|------------------|
+| Top 7 Combined | **1.6623** | **97.7%** | **Performance retention** |
+| Remaining 11 | **0.2137** | **2.3%** | **Minimal impact** |
 
 ### Phân Loại Yếu Tố Nguy Cơ
 
-#### Yếu Tố Có Thể Can Thiệp (35% tổng tầm quan trọng):
-- **Hút thuốc** (SMOKDAY2 + _RFSMOK3): 47.8%
-- **Sức khỏe tổng quát**: 30.5%
-- **Bệnh tiểu đường**: 10.9%
-- **Rào cản chi phí**: 4.8%
+#### **Phân Bố theo Domain (18 Features)**
+| **Domain** | **Features** | **Total SHAP** | **% Importance** | **Top 7 Features** |
+|------------|--------------|----------------|------------------|--------------------|
+| **Socioeconomic** | 3 | 0.9651 | 60.0% | 3 ⭐⭐⭐ |
+| **Behavioral** | 3 | 0.5139 | 32.0% | 2 ⭐⭐ |
+| **Demographics** | 2 | 0.7155 | 44.5% | 1 ⭐ |
+| **Health Status** | 4 | 0.2788 | 17.3% | 1 ⭐ |
+| **Chronic Disease** | 4 | 0.2356 | 14.7% | 1 ⭐ |
+| **Healthcare Access** | 3 | 0.0725 | 4.5% | 0 |
 
-#### Yếu Tố Khó Thay Đổi (65% tổng tầm quan trọng):
-- **Tuổi**: 68.6%
-- **Học vấn**: 34.3%
-- **Thu nhập**: 22.6%
-- **Việc làm**: 9.6%
+#### **Phân Loại theo Khả Năng Can Thiệp**
+| **Loại Can Thiệp** | **Features** | **Total SHAP** | **% Importance** | **Top 7** |
+|--------------------|--------------|----------------|------------------|-----------|
+| **✅ Có thể can thiệp** | 9 | 0.6251 | 38.9% | 3 ⭐⭐⭐ |
+| **⚠️ Khó can thiệp** | 6 | 0.6614 | 41.1% | 3 ⭐⭐⭐ |
+| **❌ Không thể can thiệp** | 2 | 0.7155 | 44.5% | 1 ⭐ |
+
+#### **Yếu Tố Có Thể Can Thiệp (Top Features)**
+- **Hút thuốc** (SMOKDAY2 + _RFSMOK3): 47.8% importance
+- **Sức khỏe tổng quát** (GENHLTH): 30.5% importance
+- **Bệnh tiểu đường** (DIABETE4): 10.9% importance
+- **Rào cản chi phí** (MEDCOST1): 4.8% importance
+
+#### **Simplified Model Performance**
+- **Full Model (18 features)**: ROC-AUC = 0.840
+- **Simplified Model (7 features ⭐)**: ROC-AUC = 0.821
+- **Performance Loss**: 0.019 (2.3%)
+- **Feature Reduction**: 61% (18→7)
 
 ---
 
