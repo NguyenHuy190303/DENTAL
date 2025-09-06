@@ -119,8 +119,3 @@
 - Dữ liệu khảo sát tự báo cáo (self‑reported) có thể có thiên lệch đo lường/ghi nhớ.
 - 14 đặc trưng là tập rút gọn, chưa khai thác đầy đủ biến lối sống/xã hội khác; có thể bổ sung để tăng hiệu năng.
 
-## Kết luận & Lựa chọn triển khai
-- Ưu tiên triển khai: Stacking Ensemble (AUC ≈ 0.99; F1 ≈ 0.93)
-- Phương án mạnh và gọn: Extra Trees (AUC ≈ 0.99; F1 ≈ 0.93)
-- Baseline vững: Random Forest (AUC ≈ 0.97; F1 ≈ 0.87)
-- Theo định hướng hiện tại: không tối ưu DL; tập trung vào các mô hình đang cho kết quả tốt và cải thiện quy trình resampling để tránh leakage.
