@@ -90,6 +90,40 @@
   - Ensembles: Voting/Stacking kết hợp nhiều mô hình để cải thiện ổn định và hiệu năng.
   - Deep Learning (1D‑CNN, TabNet): khai thác biểu diễn đặc trưng, thường cần tối ưu siêu tham số kỹ.
 
+- SHAP (SHapley Additive exPlanations): phương pháp phân rã dự đoán thành đóng góp theo từng đặc trưng dựa trên lý thuyết giá trị Shapley.
+  - Ưu điểm: cung cấp cả giải thích cục bộ (từng mẫu) và tổng quát (toàn bộ tập), xếp hạng tầm quan trọng bằng mean(|SHAP|), biểu diễn chiều hướng tác động (dấu ±).
+  - Đa lớp: dùng shap_values theo từng lớp (OVR); tổng hợp tầm quan trọng bằng trung bình tuyệt đối trên tất cả lớp (weighted theo tần suất lớp khi cần).
+  - Khuyến nghị tính cho mô hình cây (TreeExplainer) để có tốc độ/độ chính xác tốt; với mô hình nói chung có thể dùng KernelExplainer (chậm hơn).
+- SMOTEENN: kết hợp SMOTE (Synthetic Minority Over-sampling Technique) tạo mẫu tổng hợp cho lớp thiểu số và Edited Nearest Neighbors (ENN) để loại bỏ điểm nhiễu gần biên.
+  - Mục tiêu: giảm lệch lớp và làm sạch rìa quyết định; hữu ích khi lớp chiếm đa số áp đảo hoặc có nhiễu cục bộ.
+  - Lưu ý áp dụng: chỉ fit trên tập train (hoặc trong từng fold CV) để tránh rò rỉ thông tin; điều chỉnh sampling_strategy, k_neighbors (SMOTE), n_neighbors (ENN) theo phân phối lớp.
+
+## Quy trình làm việc mở rộng: chọn, drop, lọc sample, chọn feature
+- Chọn mẫu ban đầu:
+  - Giữ các quan sát có RMVTETH4 ∈ {1,2,3,4}; ánh xạ thành tooth_loss_class ∈ {0,1,2,3} như đã mô tả ở phần dữ liệu.
+  - Chuẩn hoá các mã đặc biệt (ví dụ: Refused/Don't know) về NaN để xử lý thống nhất trong bước impute.
+- Drop/Lọc mẫu:
+  - Loại bỏ bản ghi trùng lặp (nếu có, dựa trên khoá định danh hoặc vector đặc trưng).
+  - Loại bỏ các quan sát không còn giá trị hợp lệ ở biến mục tiêu sau lọc (ngoài {1..4}).
+  - Sau impute, đảm bảo không còn hàng với toàn bộ đặc trưng trống (corner case hiếm).
+- Lựa chọn đặc trưng (feature selection):
+  - Cơ sở miền và tính sẵn có: giữ 14–15 biến khảo sát phổ biến đã nêu (tuổi, thu nhập, học vấn, sức khoẻ tổng quát, BMI, giới, hoạt động thể lực, sức khoẻ tâm thần/thể chất, CVD, hen, đái tháo đường, hút thuốc...).
+  - Kiểm định nhanh bằng tầm quan trọng theo mô hình cây/SHAP: xếp hạng theo mean(|SHAP|) và xác nhận không có đặc trưng “vô dụng” rõ ràng; có thể loại bỏ đặc trưng cực kỳ yếu nếu cần đơn giản hoá.
+  - Tránh rò rỉ: chỉ dùng thông tin từ train khi tính tầm quan trọng/SHAP trong quy trình CV.
+
+## Cấu hình giải thích SHAP cho mô hình tốt nhất
+- Mục tiêu: giải thích mô hình tốt nhất để hiểu đóng góp của đặc trưng và hỗ trợ quyết định triển khai.
+- Mô hình chọn để giải thích: mô hình cây hiệu năng cao đơn lẻ (ví dụ: ExtraTrees) nhằm dùng TreeExplainer cho SHAP nhanh và ổn định; với Stacking có thể giải thích riêng từng base learner hoặc meta-learner (KernelExplainer), nhưng chi phí/độ phức tạp cao hơn.
+- Thiết lập khuyến nghị:
+  - Explainer: shap.TreeExplainer(model, model_output='probability').
+  - Background data: mẫu nền 1,000 quan sát ngẫu nhiên, stratified theo lớp, lấy TỪ TẬP TRAIN (không dùng test) để ước lượng giá trị kỳ vọng ổn định.
+  - Tính SHAP đa lớp: lấy shap_values cho từng lớp; báo cáo tầm quan trọng toàn cục bằng mean(|SHAP|) gộp lớp theo trọng số phân phối lớp train.
+  - Biểu đồ: SHAP summary (beeswarm) cho top‑20 đặc trưng; optional: bar plot mean(|SHAP|) để xếp hạng tổng quát.
+  - Tối ưu hiệu năng: tắt interaction_values mặc định; có thể bật khi cần phân tích tương tác cặp đặc trưng.
+- Sử dụng kết quả:
+  - Xác định các đặc trưng đóng góp cao nhất và chiều tác động (giá trị đặc trưng cao/thấp kéo dự đoán về lớp nào).
+  - Kiểm tra tính nhất quán giữa SHAP và domain knowledge; cân nhắc tinh chỉnh đặc trưng/tiền xử lý nếu phát hiện đặc trưng nhiễu.
+
 ## Quy trình kiểm tra và validation
 - Chiến lược tách: hold‑out 80/20 stratified; chưa áp dụng cross‑validation trong lần chạy này (có thể bổ sung K‑Fold/StratifiedKFold cho đánh giá ổn định hơn).
 - Data leakage & overfitting:
