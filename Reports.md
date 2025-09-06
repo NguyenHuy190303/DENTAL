@@ -1,26 +1,28 @@
 # Báo cáo Đánh giá Mô hình ML (Tổng hợp)
 - Nguồn dữ liệu: data/llcp2022.parquet
+- Tính năng: tập hợp 15 biến khảo sát phổ biến (đã mã hóa & tiền xử lý)
+- Định nghĩa chỉ số theo tài liệu chính thức của scikit-learn (classification_report, roc_auc_score) và Keras (nếu dùng DNN).
 
 ## Tóm tắt hiệu năng mô hình
 | Mô hình | Nhóm | Accuracy | F1 (weighted) | Precision (weighted) | Recall (weighted) | AUC (OVR, weighted) | AP (macro) |
 |---|---|---:|---:|---:|---:|---:|---:|
-| Stacking | Ensemble | 0.93 | 0.93 | 0.93 | 0.93 | 0.99 | 0.98 |
+| Stacking | Ensemble | 0.94 | 0.94 | 0.94 | 0.94 | 0.99 | 0.98 |
 | Extra Trees | Tree-based | 0.93 | 0.93 | 0.93 | 0.93 | 0.99 | 0.98 |
-| Random Forest | Tree-based | 0.87 | 0.87 | 0.87 | 0.87 | 0.97 | 0.95 |
-| KNN | Instance-based | 0.81 | 0.81 | 0.81 | 0.81 | 0.93 | 0.86 |
-| XGBoost | Tree-based | 0.75 | 0.74 | 0.74 | 0.75 | 0.88 | 0.83 |
+| Random Forest | Tree-based | 0.87 | 0.86 | 0.87 | 0.87 | 0.96 | 0.95 |
+| KNN | Instance-based | 0.82 | 0.82 | 0.82 | 0.82 | 0.93 | 0.86 |
+| XGBoost | Tree-based | 0.75 | 0.74 | 0.75 | 0.75 | 0.88 | 0.83 |
 | LightGBM | Tree-based | 0.72 | 0.71 | 0.72 | 0.72 | 0.86 | 0.80 |
-| CatBoost | Tree-based | 0.71 | 0.69 | 0.70 | 0.71 | 0.85 | 0.78 |
-| MLP | Neural Network | 0.69 | 0.68 | 0.68 | 0.69 | 0.83 | 0.75 |
-| Gradient Boosting | Tree-based | 0.67 | 0.65 | 0.66 | 0.67 | 0.81 | 0.73 |
-| Deep Neural Network (Keras - 1D CNN) | Deep Learning | 0.66 | 0.65 | 0.65 | 0.66 | 0.81 | 0.72 |
-| TabNet | Deep Learning | 0.61 | 0.58 | 0.59 | 0.61 | 0.76 | 0.64 |
-| AdaBoost | Tree-based | 0.63 | 0.62 | 0.62 | 0.63 | 0.75 | 0.64 |
-| Logistic Regression | Linear | 0.60 | 0.56 | 0.57 | 0.60 | 0.75 | 0.62 |
-| Linear Discriminant | Linear | 0.60 | 0.56 | 0.57 | 0.60 | 0.75 | 0.62 |
-| Quadratic Discriminant | Linear | 0.54 | 0.52 | 0.55 | 0.54 | 0.73 | 0.60 |
-| GaussianNB | Probabilistic | 0.53 | 0.51 | 0.54 | 0.53 | 0.72 | 0.59 |
-| SVM (RBF) | SVM | 0.43 | 0.30 | 0.33 | 0.43 | 0.59 | 0.39 |
+| CatBoost | Tree-based | 0.71 | 0.70 | 0.70 | 0.71 | 0.85 | 0.78 |
+| MLP | Neural Network | 0.70 | 0.69 | 0.69 | 0.70 | 0.84 | 0.76 |
+| Gradient Boosting | Tree-based | 0.68 | 0.66 | 0.67 | 0.68 | 0.82 | 0.74 |
+| Deep Neural Network (Keras - 1D CNN) | Deep Learning | 0.65 | 0.64 | 0.64 | 0.65 | 0.80 | 0.71 |
+| TabNet | Deep Learning | 0.65 | 0.63 | 0.63 | 0.65 | 0.79 | 0.69 |
+| Linear Discriminant | Linear | 0.60 | 0.57 | 0.58 | 0.60 | 0.75 | 0.62 |
+| Logistic Regression | Linear | 0.59 | 0.58 | 0.58 | 0.59 | 0.75 | 0.62 |
+| AdaBoost | Tree-based | 0.64 | 0.63 | 0.63 | 0.64 | 0.75 | 0.65 |
+| Quadratic Discriminant | Linear | 0.55 | 0.52 | 0.55 | 0.55 | 0.73 | 0.60 |
+| GaussianNB | Probabilistic | 0.53 | 0.51 | 0.55 | 0.53 | 0.72 | 0.59 |
+| SVM (RBF) | SVM | 0.43 | 0.29 | 0.33 | 0.43 | 0.59 | 0.40 |
 
 ## Phân tích chi tiết
 - Các chỉ số được tính bằng hàm sklearn.metrics.classification_report (precision, recall, f1, support) và roc_auc_score (AUC đa lớp, OVR/OVO).
@@ -59,6 +61,7 @@
   12) CVDSTRK3: Từng bị đột quỵ
   13) ASTHMA3: Tình trạng hen suyễn
   14) DIABETE4: Tình trạng đái tháo đường
+  15) SMOKE100
 - Thiếu dữ liệu: có xuất hiện ở nhiều biến khảo sát; đã xử lý thiếu bằng KNNImputer/median (số) và most_frequent (phân loại). Sau tiền xử lý, các biến đầu vào không còn missing.
 
 ## Quy trình thực hiện chi tiết (Methodology)
